@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.1)
 
-project(vectorNd)
+project(VecMat)
 enable_language(CXX)
 
 set(CMAKE_CXX_STANDARD 14) 
@@ -41,14 +41,19 @@ add_executable(speed speed_test.cpp)
 #target_link_libraries(cxx_test Boost::program_options) 
 
 ##for blas
+set(BLASSUPPORT ture)
 if(BLASSUPPORT)
-add_definitions(-DvectorNd_BLASLAPACK)
+message("BLAS will be used")
+add_definitions(-DvecNd_BLAS)
 ##set(BLA_VENDOR "Intel10_64ilp_seq" )
 #set ( ENV{BLA_VENDOR} "Intel10_64ilp_seq" )
-find_package(LAPACK) 
-find_package(BLAS ) 
-#target_link_libraries(demo lapacke) 
-#target_link_libraries(demo blas) 
+#find_package(LAPACK) 
+#find_package(BLAS ) 
+target_link_libraries(demo lapacke) 
+target_link_libraries(demo blas) 
+
+target_link_libraries(speed lapacke) 
+target_link_libraries(speed blas) 
 
 #target_link_libraries(demo BLAS::BLAS ${LAPACK_LIBRARIES})
 #target_link_libraries(demo mkl_intel_ilp64 mkl_sequential mkl_core pthread m dl ) 

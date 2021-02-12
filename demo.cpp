@@ -2,7 +2,7 @@
 #include <iomanip>
 #include<vector>
 #include "prettyprint.hpp"
-#include "vectorNd.hpp"
+#include "vecNd.hpp"
 
 #include<numeric>
 
@@ -14,26 +14,26 @@ using namespace VecMat;
 int main(){
 
     //without argument zero vector is made    
-    class vectorNd<3> vv10;
+    class vecNd<3> vv10;
     std::cout << "vv10:" << vv10             <<std::endl;
 
     //with one double argument, all components will be initialized by the value specified.
-    class vectorNd<3> vv11(1.0);
-    class vectorNd<3> vv12(2.0);
+    class vecNd<3> vv11(1.0);
+    class vecNd<3> vv12(2.0);
 
     //You can provde the double array to give arbitral initial values.
     double darray1[3] = {0.5, 1, 2.0};
-    class vectorNd<3> vv13(darray1);
+    class vecNd<3> vv13(darray1);
 
     // the same applies for different dimensions. 
-    class vectorNd<4> vv21(1.0);
-    class vectorNd<4> vv22(2.0);
+    class vecNd<4> vv21(1.0);
+    class vecNd<4> vv22(2.0);
     double darray2[4] = {0.5, 1, 2.0, -1.0};
-    class vectorNd<4> vv23(darray2);
+    class vecNd<4> vv23(darray2);
 
     // examples of vector calculations
     std::cout <<std::fixed;
-    std::cout << "vectorNd<VDIM>"              <<std::endl;
+    std::cout << "vecNd<VDIM>"              <<std::endl;
     std::cout << "VDIM =3"              <<std::endl;
     std::cout << "vv11:" << vv11             <<std::endl;
     std::cout << "vv12:" << vv12             <<std::endl;
@@ -87,24 +87,25 @@ int main(){
 
 
     // without initializer, the unit matrix will be made
-    class matrix<3> mat11;
+    class matNd<3> mat11;
     // if one double value is supplied, all compoments will be initialized by the value.
-    class matrix<3> mat12(1);
+    class matNd<3> mat12(1);
     // you can give double array[VDIM][VDIM] to make arbitraly initialization
     double init_array1[3][3]= {{0,1,1.2},{5.4,0,0.9},{2.4,1.3,0}};
-    class matrix<3> mat13(init_array1);
+    class matNd<3> mat13(init_array1);
 
-    class matrix<4> mat21;
-    class matrix<4> mat22(1);
+    class matNd<4> mat21;
+    class matNd<4> mat22(1);
     //double init_array2[4][4]= {{-1,2,3,4},{5,-1,7,8},{9,10,0,12},{13,14,15,1}};
     double init_array2[4][4]= {{2,0,0,1},{0,5,1,0},{-2,0,4,0},{0,1,1,1}};
-    class matrix<4> mat23(init_array2);
+    class matNd<4> mat23(init_array2);
+
 
 
     std::cout << std::endl;
     std::cout << std::endl;
     std::cout << "***************************"              <<std::endl;
-    std::cout << "matrix<VDIM>"              <<std::endl;
+    std::cout << "matNd<VDIM>"              <<std::endl;
     std::cout << "VDIM =3"                    <<std::endl;
     std::cout << "mat11:" << mat11            <<std::endl;
     std::cout << "mat12:" << mat12            <<std::endl;
@@ -188,28 +189,26 @@ int main(){
 
 
 // as operators are overloaded accumulate and so on can be readily usable
-    std::vector< class matrix<3>> mat_array1(3);
+    std::vector< class matNd<3>> mat_array1(3);
 
     std::cout << mat_array1 << std::endl;
     
-    class matrix<3> init(0.0);
+    class matNd<3> init(0.0);
     auto sum1 = std::accumulate(mat_array1.begin()+1, mat_array1.end(), mat_array1[0]);
 
     std::cout << "sum1: " << sum1 << std::endl;
 
-/* 
-    //lapack_int LAPACKE_dsyev( int matrix_layout, char jobz, char uplo, lapack_int n, double* a, lapack_int lda, double* w );
+    //lapack_int LAPACKE_dsyev( int matNd_layout, char jobz, char uplo, lapack_int n, double* a, lapack_int lda, double* w );
 
 
-    class matrix<4> work(0.0);
-    class matrix<4> mat23v2(mat23);
+    class matNd<4> mat23v2(mat23);
     double wi[4];
     double wr[4];
 
     //double vl[4][4];
     //double vr[4][4];
-    class matrix<4> vl2 ;
-    class matrix<4> vr2 ;
+    class matNd<4> vl2 ;
+    class matNd<4> vr2 ;
 
     //LAPACKE_dgeev(LAPACK_ROW_MAJOR, 'N', 'V', 
     //                      4, &(mat23v2.mat[0][0]), 4, wr, 
@@ -217,8 +216,8 @@ int main(){
     //                      4 );
     //LAPACKE_dgeev(LAPACK_COL_MAJOR, 'N', 'V', 
     LAPACKE_dgeev(LAPACK_ROW_MAJOR, 'N', 'V', 
-                          4, mat23v2.mat[0], 4, wr, 
-                          wi, vl2.mat[0], 4,  vr2.mat[0], 
+                          4, mat23v2.p, 4, wr, 
+                          wi, vl2.p, 4,  vr2.p, 
                           4 );
 
 
@@ -230,11 +229,11 @@ int main(){
 
     std::cout << wr << std::endl;
     
-    class matrix<4> tmp(vr2.T()); 
-    class vectorNd<4>  eigenv0(tmp[0]);
-    class vectorNd<4>  eigenv1(tmp[1]);
-    class vectorNd<4>  eigenv2(tmp[2]);
-    class vectorNd<4>  eigenv3(tmp[3]);
+    class matNd<4> tmp(vr2.T()); 
+    class vecNd<4>  eigenv0(tmp[0]);
+    class vecNd<4>  eigenv1(tmp[1]);
+    class vecNd<4>  eigenv2(tmp[2]);
+    class vecNd<4>  eigenv3(tmp[3]);
 
 //    for(int i = 0; i <4 ; i++){            
 //        eigenv0[i]=vr[i][0];
@@ -262,9 +261,8 @@ int main(){
 //                  const douggble *Y, const int incY);
 
     double ans;
-    ans = cblas_ddot(vv11.size, vv11.vec, 1, vv12.vec,1);
+    ans = cblas_ddot(vv11.size, vv11.p, 1, vv12.p,1);
     std::cout << ans << std::endl;
     std::cout << vv11*vv12 << std::endl;
-*/
 
 }

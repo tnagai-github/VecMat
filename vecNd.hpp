@@ -2,13 +2,16 @@
 
 // Simple vecotor and matrix calculation
 // No broad cast, unlike numpy.
-// * is used as inner product, NOT as the product of each element.
-// very simple and fundermental method for matrix is here implemented.
+// operator "*" is used as the inner product, NOT as the product of each element.
+// very simple and fundermental methods for matrix are here implemented.
 // For more complex methods, lapack should be considered. 
+// Instead of the naive implementaiton, corresponding function from cblas 
+// can be called by defining "vecNd_BLAS". 
+// Athgough not tested, this should be be important when the dimension of problems is large. 
 
-//incude guard
-#ifndef __vectorNd_FILE__
-#define __vectorNd_FILE__
+//include guard
+#ifndef vecNd_FILE_
+#define vecNd_FILE_
 
 #include<iostream>
 #include "prettyprint.hpp"
@@ -19,74 +22,76 @@
 #define bDEBUG (false)
 #endif
 
-//#undef vectorNd_BLASLAPACK
-//#define vectorNd_BLASLAPACK
 
-#ifdef vectorNd_BLASLAPACK
-#include <lapacke.h>
+#ifdef vecNd_BLAS
+//#include <lapacke.h>
 #include <cblas.h>
 #endif
 
-// +>+>+>+>+>+>+>+>+>+>+>+>+>+>+>+>+>+>+>+>+>+>+>>+>+>+>+>+>+>
+/*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*/
 namespace VecMat {
     template <int VDIM > 
-    class vectorNd {
+    class vecNd {
         public: 
-        int size = VDIM;
         double vec[VDIM];
+        double * const p = vec;
+        const int size = VDIM;
 
-        vectorNd(){
+        //copy construstor
+        vecNd(const vecNd<VDIM> & obj ){
+            for (int i=0; i<VDIM; ++i){
+                this->vec[i]=obj.vec[i];
+            }
+        }
+
+        vecNd& operator= (const vecNd & a) {
+            for(int i=0; i<size; i++){
+                this->vec[i]=a.vec[i];
+            }
+            return *this;
+        } 
+
+        vecNd(){
             for(int i = 0; i< size; ++i ){
                 vec[i]=0.0;
             }
         }
-        vectorNd(const double x){
+        vecNd(const double x){
             for(int i = 0; i< size; ++i ){
                 vec[i]=x;
             }
         }
-        vectorNd(double vec_in[VDIM]){
+        vecNd(double vec_in[VDIM]){
             for(int i = 0; i< size; ++i ){
                 vec[i]=vec_in[i];
             }
         }
 
-        double dot (const vectorNd &a) const {
-            #ifdef vectorNd_BLASLAPACK
-            return cblas_ddot(this->size, this->vec, 1, a.vec,1);
-            #else
-            double sum=0;
-            for(int i=0; i < VDIM; ++i){           
-                sum+=a.vec[i]*vec[i];
-            }
-            return sum;
-            #endif
-        }
+        inline double dot (const vecNd &a) const ;
 
         double abs () const {
-            //return sqrt(dot(*this, *this));
             return sqrt(this->dot(*this));
         }
 
-        double & operator [] (const int i );
-        double   operator [] (const int i ) const;
+        inline double & operator [] (const int i );
+        inline double   operator [] (const int i ) const;
 
-        vectorNd& operator+= (const vectorNd & a) {
+        vecNd& operator+= (const vecNd & a) {
             for(int i=0; i<size; i++){
                 this->vec[i]+=a.vec[i];
             }
             return *this;
         } 
 
-        vectorNd& operator-= (const vectorNd & a) {
+        vecNd& operator-= (const vecNd & a) {
             for(int i=0; i<size; i++){
                 this->vec[i]-=a.vec[i];
             }
             return *this;
         } 
 
-        vectorNd& operator*= (const double a) {
-            #ifdef vectorNd_BLASLAPACK 
+        vecNd& operator*= (const double a) {
+            #ifdef vecNd_BLAS 
             cblas_dscal(this->size, a, this->vec, 1);
             return *this;
             //cblas_dscal(const int N, const double alpha, double *X, const int incX);
@@ -97,91 +102,120 @@ namespace VecMat {
             return *this;
         } 
 
-        vectorNd& operator/= (const double a) {
+        vecNd& operator/= (const double a) {
             double tmp = 1.0/a;
-            //for(int i=0; i<size; i++){
-            //    this->vec[i]*=tmp;
-            //}
-            //return *this;
             return (*this)*=tmp;
         } 
     };
 
     template <int VDIM > 
-    double dot(const vectorNd<VDIM> &a, const vectorNd<VDIM> &b){
+    double vecNd<VDIM>::dot (const vecNd &a) const {
+        #ifdef vecNd_BLAS
+        return cblas_ddot(this->size, this->vec, 1, a.vec,1);
+        #else
+        double sum=0;
+        for(int i=0; i < VDIM; ++i){           
+            sum+=a.vec[i]*vec[i];
+        }
+        return sum;
+        #endif
+    }
+
+    template <int VDIM > 
+    double & vecNd<VDIM>::operator [] (const int i ) {
+        if(bDEBUG){
+            if(i<0 or VDIM<=i){
+                std::cerr << "Improper access" << std::endl;
+                exit(EXIT_FAILURE) ;
+            }
+        }
+        return this->vec[i];
+    }
+
+    template <int VDIM > 
+    double vecNd<VDIM>::operator [] (const int i ) const {
+        if(bDEBUG){
+            if(i<0 or VDIM<=i){
+                std::cerr << "Improper access" << std::endl;
+                exit(EXIT_FAILURE) ;
+            }
+        }
+        return this->vec[i];
+    }
+
+    template <int VDIM > 
+    double dot(const vecNd<VDIM> &a, const vecNd<VDIM> &b){
         return a.dot(b);
     }
 
     template <int VDIM > 
-    double abs(const vectorNd<VDIM> &a){
+    double abs(const vecNd<VDIM> &a){
         return sqrt(dot(a, a));
     }
 
-
     template <int VDIM > 
-    std::ostream& operator << (std::ostream &os, const vectorNd<VDIM>& vv){
+    std::ostream& operator << (std::ostream &os, const vecNd<VDIM>& vv){
         os << vv.vec ; //with prittyprint 
         return os;
     }
 
+
     template <int VDIM > 
-    double & vectorNd<VDIM>::operator [] (const int i ) {
-        if(bDEBUG){
-            if(i<0 or VDIM<=i){
-                std::cerr << "Improper access" << std::endl;
-                exit(EXIT_FAILURE) ;
-            }
-        }
-        return this->vec[i];
+    const vecNd<VDIM> operator + (const vecNd<VDIM> &a, const vecNd<VDIM> &b){
+        return vecNd<VDIM>(a)+=b;
     }
 
     template <int VDIM > 
-    double vectorNd<VDIM>::operator [] (const int i ) const {
-        if(bDEBUG){
-            if(i<0 or VDIM<=i){
-                std::cerr << "Improper access" << std::endl;
-                exit(EXIT_FAILURE) ;
-            }
-        }
-        return this->vec[i];
+    const vecNd<VDIM> operator - (const vecNd<VDIM> &a, const vecNd<VDIM> &b){
+        return vecNd<VDIM>(a)-=b;
+    }
+    template <int VDIM > 
+    const vecNd<VDIM> operator * (const double a, const vecNd<VDIM>&b){
+        return vecNd<VDIM>(b)*=a;
     }
 
     template <int VDIM > 
-    const vectorNd<VDIM> operator + (const vectorNd<VDIM> &a, const vectorNd<VDIM> &b){
-        return vectorNd<VDIM>(a)+=b;
-    }
-
-    template <int VDIM > 
-    const vectorNd<VDIM> operator - (const vectorNd<VDIM> &a, const vectorNd<VDIM> &b){
-        return vectorNd<VDIM>(a)-=b;
-    }
-    template <int VDIM > 
-    const vectorNd<VDIM> operator * (const double a, const vectorNd<VDIM>&b){
-        return vectorNd<VDIM>(b)*=a;
-    }
-
-    template <int VDIM > 
-    double operator * (const vectorNd<VDIM> &a, const vectorNd<VDIM> &b){
+    double operator * (const vecNd<VDIM> &a, const vecNd<VDIM> &b){
         return dot(a,b);
     }
 
     template <int VDIM > 
-    const vectorNd<VDIM> operator * (const vectorNd<VDIM> &a, const double b){
-        return vectorNd<VDIM>(a)*=b;
+    const vecNd<VDIM> operator * (const vecNd<VDIM> &a, const double b){
+        return vecNd<VDIM>(a)*=b;
     }
 
     template <int VDIM > 
-    const vectorNd<VDIM> operator/ (const vectorNd<VDIM> &a, const double b){
-        return vectorNd<VDIM>(a)/=b;
+    const vecNd<VDIM> operator/ (const vecNd<VDIM> &a, const double b){
+        return vecNd<VDIM>(a)/=b;
     }
 
 
     template <int VDIM > 
-    class matrix {            
+    class matNd {
         public:
         double mat[VDIM][VDIM] ;
+        double * const p = mat[0];
+        const int size = VDIM;
+            
 
-        matrix(){
+        matNd(const matNd<VDIM> &obj){
+            for(int i =0 ; i < VDIM; ++i){                    
+                for(int j =0 ; j < VDIM; ++j){                    
+                    this->mat[i][j] = obj.mat[i][j];
+                }
+            }
+        }
+
+        matNd& operator=(const matNd & a){
+            for(int i =0 ; i < VDIM; ++i){                    
+                for(int j =0 ; j < VDIM; ++j){                    
+                    mat[i][j] = a[i][j] ;
+                }
+            }
+            return *this;
+        }
+
+        matNd(){
             for(int i =0 ; i < VDIM; ++i){                    
                 for(int j =0 ; j < VDIM; ++j){                    
                     if(i==j){
@@ -192,7 +226,8 @@ namespace VecMat {
                 }
             }
         }
-        matrix(double x){
+
+        matNd(double x){
             for(int i =0 ; i < VDIM; ++i){                    
                 for(int j =0 ; j < VDIM; ++j){                    
                     mat[i][j] = x ;
@@ -200,7 +235,7 @@ namespace VecMat {
             }
         }
 
-        matrix(double mat_in[VDIM][VDIM]){
+        matNd(double mat_in[VDIM][VDIM]){
             for(int i =0 ; i < VDIM; ++i){                    
                 for(int j =0 ; j < VDIM; ++j){                    
                     mat[i][j] = mat_in[i][j] ;
@@ -228,7 +263,7 @@ namespace VecMat {
             return this->mat[i];
         }
 
-        matrix& operator+=(const matrix & a){
+        matNd& operator+=(const matNd & a){
             for(int i =0 ; i < VDIM; ++i){                    
                 for(int j =0 ; j < VDIM; ++j){                    
                     mat[i][j] += a[i][j] ;
@@ -237,7 +272,7 @@ namespace VecMat {
             return *this;
         }
 
-        matrix& operator-=(const matrix & a){
+        matNd& operator-=(const matNd & a){
             for(int i =0 ; i < VDIM; ++i){                    
                 for(int j =0 ; j < VDIM; ++j){                    
                     mat[i][j] -= a[i][j] ;
@@ -246,7 +281,7 @@ namespace VecMat {
             return *this;
         }
 
-        matrix& operator*= (const double a) {
+        matNd& operator*= (const double a) {
             for(int i =0 ; i < VDIM; ++i){                    
                 for(int j =0 ; j < VDIM; ++j){                    
                     mat[i][j]*=a ;
@@ -255,21 +290,16 @@ namespace VecMat {
             return *this;
         } 
 
-        matrix& operator*= (const matrix a) {
-            #ifdef vectorNd_BLASLAPACK
-            matrix<VDIM> results(0.0);
+        matNd& operator*= (const matNd a) {
+            #ifdef vecNd_BLAS
+            matNd<VDIM> results(0.0);
             cblas_dgemm(CblasRowMajor,CblasNoTrans,
                  CblasNoTrans, VDIM, VDIM,
-                 VDIM, 1.0, this->mat[0],
-                 VDIM, a.mat[0], VDIM,
-                  0.0, results.mat[0], VDIM);
-            //void cblas_dgemm(CBLAS_LAYOUT layout, CBLAS_TRANSPOSE TransA,
-            //     CBLAS_TRANSPOSE TransB, const int M, const int N,
-            //     const int K, const double alpha, const double *A,
-            //     const int lda, const double *B, const int ldb,
-            //     const double beta, double *C, const int ldc);
+                 VDIM, 1.0, this->p,
+                 VDIM, a.p, VDIM,
+                  0.0, results.p, VDIM);
             #else
-            matrix results(0.0); 
+            matNd results(0.0); 
             for(int i =0 ; i < VDIM; ++i){                    
                 for(int j =0 ; j < VDIM; ++j){                    
                    for(int k =0 ; k < VDIM; ++k){                    
@@ -283,7 +313,7 @@ namespace VecMat {
 
         } 
 
-        matrix& operator/= (const double a) {
+        matNd& operator/= (const double a) {
             for(int i =0 ; i < VDIM; ++i){                    
                 for(int j =0 ; j < VDIM; ++j){                    
                     mat[i][j]/=a ;
@@ -292,8 +322,8 @@ namespace VecMat {
             return *this;
         } 
 
-        const matrix T() const{
-            matrix result;
+        const matNd T() const{
+            matNd result;
             for(int i =0 ; i < VDIM; ++i){                    
                 for(int j =0 ; j < VDIM; ++j){                    
                     result[i][j] = (*this)[j][i] ;
@@ -301,51 +331,51 @@ namespace VecMat {
             }
             return result;
         }
-        //const matrix pivotA() const ;
-        const matrix triangle() const ;
+        //const matNd pivotA() const ;
+        const matNd triangle() const ;
         double det() const ;
     };
 
     template<int VDIM>
-    std::ostream& operator << (std::ostream &os, const matrix<VDIM>& mat){
+    std::ostream& operator << (std::ostream &os, const matNd<VDIM>& mat){
         os << mat.mat ; //with pritty print 
         return os;
     }
 
     template<int VDIM>
-    const matrix<VDIM>  operator+ (const matrix<VDIM> &a, const matrix<VDIM> &b){
-        return matrix<VDIM>(a)+=b;
+    const matNd<VDIM>  operator+ (const matNd<VDIM> &a, const matNd<VDIM> &b){
+        return matNd<VDIM>(a)+=b;
     }
 
     template<int VDIM>
-    const matrix<VDIM>  operator- (const matrix<VDIM> &a, const matrix<VDIM> &b){
-        return matrix<VDIM>(a)-=b;
+    const matNd<VDIM>  operator- (const matNd<VDIM> &a, const matNd<VDIM> &b){
+        return matNd<VDIM>(a)-=b;
     }
 
     template<int VDIM>
-    const matrix<VDIM>  operator* (const matrix<VDIM> &a, const matrix<VDIM> &b){
-        return matrix<VDIM>(a)*=b;
+    const matNd<VDIM>  operator* (const matNd<VDIM> &a, const matNd<VDIM> &b){
+        return matNd<VDIM>(a)*=b;
     }
 
     template<int VDIM>
-    const matrix<VDIM>  operator* (const matrix<VDIM> &a, const double b){
-        return matrix<VDIM>(a)*=b;
+    const matNd<VDIM>  operator* (const matNd<VDIM> &a, const double b){
+        return matNd<VDIM>(a)*=b;
     }
 
     template<int VDIM>
-    const matrix<VDIM>  operator* (const double a, const matrix<VDIM> &b){
-        return matrix<VDIM>(b)*=a;
+    const matNd<VDIM>  operator* (const double a, const matNd<VDIM> &b){
+        return matNd<VDIM>(b)*=a;
     }
 
     template<int VDIM>
-    const vectorNd<VDIM>  operator* (const matrix<VDIM> &a, const vectorNd<VDIM> &b){
-        vectorNd<VDIM> result(0.0);
-        #ifdef vectorNd_BLASLAPACK
+    const vecNd<VDIM>  operator* (const matNd<VDIM> &a, const vecNd<VDIM> &b){
+        vecNd<VDIM> result(0.0);
+        #ifdef vecNd_BLAS
         cblas_dgemv(CblasRowMajor, 
-            CblasNoTrans, VDIM, VDIM,
-            1.0, a.mat[0], VDIM,
-            b.vec, 1, 0.0, 
-            result.vec, 1);
+            CblasNoTrans, /*M=*/VDIM, /*N=*/ VDIM,
+            /*alpha=*/1.0, a.p, /*lda=*/ VDIM,
+            b.p, 1, /*beta=*/0.0, 
+            result.p, 1);
         //void cblas_dgemv(CBLAS_LAYOUT layout,
         //         CBLAS_TRANSPOSE TransA, const int M, const int N,
         //         const double alpha, const double *A, const int lda,
@@ -362,9 +392,9 @@ namespace VecMat {
     }
 
     template<int VDIM>
-    const vectorNd<VDIM> operator* (const vectorNd<VDIM> &a, const matrix<VDIM> &b){
-        vectorNd<VDIM> result(0.0);
-        #ifdef vectorNd_BLASLAPACK
+    const vecNd<VDIM> operator* (const vecNd<VDIM> &a, const matNd<VDIM> &b){
+        vecNd<VDIM> result(0.0);
+        #ifdef vecNd_BLAS
         cblas_dgemv(CblasRowMajor, 
             CblasTrans, VDIM, VDIM,
             1.0, b.mat[0], VDIM,
@@ -386,9 +416,9 @@ namespace VecMat {
     }
 
 //   template<int VDIM>
-//   const matrix<VDIM> pow (const matrix<VDIM> &a, const int n){
+//   const matNd<VDIM> pow (const matNd<VDIM> &a, const int n){
 //       if(n == 0){
-//           matrix<VDIM> I;
+//           matNd<VDIM> I;
 //           return I;
 //       }
 //       if(n < 0){
@@ -400,9 +430,9 @@ namespace VecMat {
 //   }
 
     template<int VDIM>
-    const matrix<VDIM> pow (const matrix<VDIM> &a, const int n){
+    const matNd<VDIM> pow (const matNd<VDIM> &a, const int n){
         if(n == 0){
-            matrix<VDIM> I;
+            matNd<VDIM> I;
             return I;
         }
         if(n < 0){
@@ -419,16 +449,16 @@ namespace VecMat {
     }
 
     template<int VDIM>
-    const matrix<VDIM>  operator/ (const matrix<VDIM> &a, const double b){
-        return matrix<VDIM>(a)/=b;
+    const matNd<VDIM>  operator/ (const matNd<VDIM> &a, const double b){
+        return matNd<VDIM>(a)/=b;
     }
 
 
     // outerproduct is defined for N=VDIM only. this should be practical enough.
     
-    const vectorNd<3> cross(const vectorNd<3> &a, const vectorNd<3> &b){
+    const vecNd<3> cross(const vecNd<3> &a, const vecNd<3> &b){
         int VDIM=3;
-        vectorNd<3> result(0.0);
+        vecNd<3> result(0.0);
         for (int i=0 ; i <VDIM ; ++i){
             result[i]+=a[(i+1)%VDIM]*b[(i+2)%VDIM];
         }
@@ -440,8 +470,8 @@ namespace VecMat {
 
 
     template<int VDIM>
-    const matrix<VDIM> matrix<VDIM>::triangle () const {
-        matrix<VDIM> result=(*this);
+    const matNd<VDIM> matNd<VDIM>::triangle () const {
+        matNd<VDIM> result=(*this);
 
         for(int i = 0; i <VDIM;  ++i){
             if (result[i][i] == 0.0){
@@ -495,13 +525,13 @@ namespace VecMat {
     }
 
     template<int VDIM>
-    const matrix<VDIM> triangle (const matrix<VDIM> & a )  {
+    const matNd<VDIM> triangle (const matNd<VDIM> & a )  {
         return a.triangle();
     }
 
     template<int VDIM>
-    double matrix<VDIM>::det () const {
-        matrix<VDIM> tmp(this->triangle());
+    double matNd<VDIM>::det () const {
+        matNd<VDIM> tmp(this->triangle());
         double result=1.0;
         for(int i=0; i<VDIM; i++){
             result*=tmp[i][i];
@@ -509,35 +539,32 @@ namespace VecMat {
         return result;
     }
     template<int VDIM>
-    double det (matrix<VDIM> const &a){
+    double det (matNd<VDIM> const &a){
         return a.det();
     }
 
     // some more special function for VDIM = 3
-    const matrix<3> rot_by_x(double theta){
+    const matNd<3> rot_by_x(double theta){
         const int VDIM=3;
         double array[VDIM][VDIM]={{1, 0, 0}, {0, cos(theta), -sin(theta)}, {0, sin(theta), cos(theta)}};
-        matrix<VDIM> result(array);
+        matNd<VDIM> result(array);
         return result;
     }
 
-    const matrix<3> rot_by_y(double theta){
+    const matNd<3> rot_by_y(double theta){
         const int VDIM=3;
         double array[VDIM][VDIM]={{cos(theta), 0, sin(theta)}, {0, 1, 0}, {-sin(theta), 0, cos(theta)}};
-        matrix<VDIM> result(array);
+        matNd<VDIM> result(array);
         return result;
     }
 
-    const matrix<3> rot_by_z(double theta){
+    const matNd<3> rot_by_z(double theta){
         const int VDIM=3;
         double array[VDIM][VDIM]={{cos(theta), -sin(theta), 0}, {sin(theta), cos(theta), 0}, {0, 0, 1}};
-        matrix<VDIM> result(array);
+        matNd<VDIM> result(array);
         return result;
     }
 }
 
-#ifdef vectorNd_BLASLAPACK
-#undef vectorNd_BLASLAPACK
-#endif
 
-#endif
+#endif //for include guard
