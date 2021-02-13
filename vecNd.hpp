@@ -24,7 +24,7 @@
 
 
 #ifdef vecNd_BLAS
-//#include <lapacke.h>
+#include <lapacke.h>
 #include <cblas.h>
 #endif
 
@@ -334,7 +334,28 @@ namespace VecMat {
         //const matNd pivotA() const ;
         const matNd triangle() const ;
         double det() const ;
+
+
     };
+        
+    template<int VDIM>
+    struct t_ans_ev{
+        double eigenValRe[VDIM] ={};
+        double eigenValIm[VDIM] ={};
+        matNd<VDIM> eigenVecl=0.0;
+        matNd<VDIM> eigenVecr=0.0;
+    };
+
+    template<int VDIM>
+    t_ans_ev<VDIM> wrap_dgeev(const matNd<VDIM> &obj) {
+       matNd<VDIM> copy = obj;
+       t_ans_ev<VDIM>  ans;
+       LAPACKE_dgeev(LAPACK_ROW_MAJOR, 'V', 'V', 
+           VDIM, copy.p, VDIM, ans.eigenValRe, 
+           ans.eigenValIm, ans.eigenVecl.p, VDIM,  ans.eigenVecr.p, 
+           VDIM);
+       return ans;
+    }
 
     template<int VDIM>
     std::ostream& operator << (std::ostream &os, const matNd<VDIM>& mat){

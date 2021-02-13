@@ -198,8 +198,6 @@ int main(){
 
     std::cout << "sum1: " << sum1 << std::endl;
 
-    //lapack_int LAPACKE_dsyev( int matNd_layout, char jobz, char uplo, lapack_int n, double* a, lapack_int lda, double* w );
-
 
     class matNd<4> mat23v2(mat23);
     double wi[4];
@@ -220,7 +218,14 @@ int main(){
                           wi, vl2.p, 4,  vr2.p, 
                           4 );
 
+    auto ans2 = wrap_dgeev(rot_by_x(45/180.*2*M_PI));
 
+    std::cout << "*wrapper's*" << std::endl;
+    std::cout << ans2.eigenValRe << std::endl;
+    std::cout << ans2.eigenValIm << std::endl;
+    std::cout << ans2.eigenVecl.T() << std::endl;
+    std::cout << ans2.eigenVecr.T() << std::endl;
+    std::cout << "***********" << std::endl;
 
     //std::cout << mat23 << std::endl;
     //for(int i=0; i<4;i++){
@@ -235,13 +240,13 @@ int main(){
     class vecNd<4>  eigenv2(tmp[2]);
     class vecNd<4>  eigenv3(tmp[3]);
 
-//    for(int i = 0; i <4 ; i++){            
-//        eigenv0[i]=vr[i][0];
-//        eigenv1[i]=vr[i][1];
-//        eigenv2[i]=vr[i][2];
-//        eigenv3[i]=vr[i][3];
-//    }
-//
+
+    std::cout << "*eigenvecs*" << std::endl;
+    std::cout << eigenv0 << std::endl;
+    std::cout << eigenv1 << std::endl;
+    std::cout << eigenv2 << std::endl;
+    std::cout << eigenv3 << std::endl;
+
     std::cout << "******" << std::endl;
     std::cout << mat23*eigenv0 << std::endl;
     std::cout << wr[0]*eigenv0 << std::endl;
