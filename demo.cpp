@@ -218,13 +218,14 @@ int main(){
                           wi, vl2.p, 4,  vr2.p, 
                           4 );
 
-    auto ans2 = wrap_dgeev(rot_by_x(45/180.*2*M_PI));
+    auto ans2 = wrap_dgeev(mat23);
 
     std::cout << "*wrapper's*" << std::endl;
     std::cout << ans2.eigenValRe << std::endl;
     std::cout << ans2.eigenValIm << std::endl;
-    std::cout << ans2.eigenVecl.T() << std::endl;
-    std::cout << ans2.eigenVecr.T() << std::endl;
+    std::cout << ans2.eigenVecl << std::endl;
+    std::cout << ans2.eigenVecr << std::endl;
+    std::cout << ans2 << std::endl;
     std::cout << "***********" << std::endl;
 
     //std::cout << mat23 << std::endl;
@@ -269,5 +270,6 @@ int main(){
     ans = cblas_ddot(vv11.size, vv11.p, 1, vv12.p,1);
     std::cout << ans << std::endl;
     std::cout << vv11*vv12 << std::endl;
+
 
 }

@@ -61,7 +61,7 @@ namespace VecMat {
                 vec[i]=x;
             }
         }
-        vecNd(double vec_in[VDIM]){
+        vecNd(const double vec_in[VDIM]){
             for(int i = 0; i< size; ++i ){
                 vec[i]=vec_in[i];
             }
@@ -339,7 +339,8 @@ namespace VecMat {
     };
         
     template<int VDIM>
-    struct t_ans_ev{
+    class t_ans_ev{
+        public:
         double eigenValRe[VDIM] ={};
         double eigenValIm[VDIM] ={};
         matNd<VDIM> eigenVecl=0.0;
@@ -347,14 +348,35 @@ namespace VecMat {
     };
 
     template<int VDIM>
+    std::ostream& operator << (std::ostream &os, const t_ans_ev<VDIM>& obj){
+        for(int i=0; i<VDIM; i++){
+            os << "Eigen val[ " << i << " ]= " << obj.eigenValRe[i] <<" + " << obj.eigenValIm[i] <<" *i" <<std::endl;//with pritty print 
+        }
+        os << "Eigen vec (left)" <<std::endl;
+        for(int i=0; i<VDIM; i++){
+            os  <<  vecNd<VDIM> (obj.eigenVecl[i]) << std::endl ;
+        }
+        os << "Eigen vec (right)" <<std::endl;
+        for(int i=0; i<VDIM; i++){
+            os  <<  vecNd<VDIM> (obj.eigenVecr[i]) ;
+            if(i!=VDIM-1){
+                os  <<  std::endl;
+            }
+        }
+        return os;
+    }
+
+    template<int VDIM>
     t_ans_ev<VDIM> wrap_dgeev(const matNd<VDIM> &obj) {
-       matNd<VDIM> copy = obj;
-       t_ans_ev<VDIM>  ans;
-       LAPACKE_dgeev(LAPACK_ROW_MAJOR, 'V', 'V', 
+        matNd<VDIM> copy = obj;
+        t_ans_ev<VDIM>  ans;
+        LAPACKE_dgeev(LAPACK_ROW_MAJOR, 'V', 'V', 
            VDIM, copy.p, VDIM, ans.eigenValRe, 
            ans.eigenValIm, ans.eigenVecl.p, VDIM,  ans.eigenVecr.p, 
            VDIM);
-       return ans;
+        ans.eigenVecl=ans.eigenVecl.T();
+        ans.eigenVecr=ans.eigenVecr.T();
+        return ans;
     }
 
     template<int VDIM>
