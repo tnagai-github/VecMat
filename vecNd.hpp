@@ -14,6 +14,7 @@
 #define vecNd_FILE_
 
 #include<iostream>
+#include <initializer_list>
 #include "prettyprint.hpp"
 
 #ifdef DEBUG
@@ -22,6 +23,13 @@
 #define bDEBUG (false)
 #endif
 
+//#define BOUNDCHECK (false)
+#define BOUNDCHECK (true)
+//#ifdef BOUNDCHECK
+//#define BOUNDCHECK (true)
+//#else
+//#define BOUNDCHECK (false)
+//#endif
 
 #ifdef vecNd_BLAS
 #include <lapacke.h>
@@ -35,25 +43,33 @@ namespace VecMat {
         public: 
         double vec[VDIM];
         double * const p = vec;
-        const int size = VDIM;
+        static constexpr int size = VDIM;
+        
+        //double*  begin(){return vec;};
+        //double*  end()  {return vec+VDIM;};
 
         //copy construstor
-        vecNd(const vecNd<VDIM> & obj ){
-            for (int i=0; i<VDIM; ++i){
-                this->vec[i]=obj.vec[i];
+        vecNd(const vecNd & ) = default;
+        vecNd& operator= (const vecNd &) = default;
+
+        //move constructor
+        vecNd(vecNd && ) = default;
+        vecNd& operator= (vecNd &&)  = default;
+
+        vecNd(std::initializer_list<double> list){
+            if(list.size() != size){
+                std::cerr << "warning: length of initializer list is not consistent!! " << std::endl;
+            }
+            auto itr = list.begin();
+            for (int i = 0; i<size; ++i){
+                vec[i]=*itr;
+                itr++;
             }
         }
 
-        vecNd& operator= (const vecNd & a) {
-            for(int i=0; i<size; i++){
-                this->vec[i]=a.vec[i];
-            }
-            return *this;
-        } 
-
         vecNd(){
-            for(int i = 0; i< size; ++i ){
-                vec[i]=0.0;
+            for(auto& each : vec){
+                each=0.0;
             }
         }
         vecNd(const double x){
@@ -61,6 +77,7 @@ namespace VecMat {
                 vec[i]=x;
             }
         }
+
         vecNd(const double vec_in[VDIM]){
             for(int i = 0; i< size; ++i ){
                 vec[i]=vec_in[i];
@@ -71,6 +88,14 @@ namespace VecMat {
 
         double abs () const {
             return sqrt(this->dot(*this));
+        }
+
+        double sum () const {
+            double sum = 0.0;
+            for(int i = 0; i<VDIM; ++i){
+                sum+=vec[i];
+            }
+            return sum;
         }
 
         inline double & operator [] (const int i );
@@ -123,7 +148,7 @@ namespace VecMat {
 
     template <int VDIM > 
     double & vecNd<VDIM>::operator [] (const int i ) {
-        if(bDEBUG){
+        if(BOUNDCHECK){
             if(i<0 or VDIM<=i){
                 std::cerr << "Improper access" << std::endl;
                 exit(EXIT_FAILURE) ;
@@ -134,7 +159,7 @@ namespace VecMat {
 
     template <int VDIM > 
     double vecNd<VDIM>::operator [] (const int i ) const {
-        if(bDEBUG){
+        if(BOUNDCHECK){
             if(i<0 or VDIM<=i){
                 std::cerr << "Improper access" << std::endl;
                 exit(EXIT_FAILURE) ;
@@ -195,8 +220,24 @@ namespace VecMat {
         public:
         double mat[VDIM][VDIM] ;
         double * const p = mat[0];
-        const int size = VDIM;
+        static constexpr int size = VDIM;
             
+        //move constructor
+        matNd(matNd&&) = default;
+        matNd& operator=(matNd&&) = default;
+
+        matNd(std::initializer_list<double> list){
+            if(list.size() != size*size){
+                std::cerr << "warning: length of initializer list is not consistent!! " << std::endl;
+            }
+            auto itr = list.begin();
+            for(int i = 0; i<VDIM; ++i){
+                for(int j = 0; j<VDIM; j++){
+                    mat[i][j] = *itr;
+                    itr++;
+                }
+            }
+        }
 
         matNd(const matNd<VDIM> &obj){
             for(int i =0 ; i < VDIM; ++i){                    
@@ -243,8 +284,16 @@ namespace VecMat {
             }
         }
 
+        matNd(vecNd<VDIM> vec[VDIM]){
+            for(int i =0 ; i < VDIM; ++i){                    
+                for(int j =0 ; j < VDIM; ++j){                    
+                    mat[i][j] = vec[i][j] ;
+                }
+            }
+        }
+
         double* operator [] (const int i ){
-            if(bDEBUG){
+            if(BOUNDCHECK){
                 if(i<0 or VDIM<=i){
                     std::cerr << "Improper access" << std::endl;
                     exit(EXIT_FAILURE) ;
@@ -254,13 +303,20 @@ namespace VecMat {
         }
 
         const double* operator [] (const int i ) const {
-            if(bDEBUG){
+            if(BOUNDCHECK){
                 if(i<0 or VDIM<=i){
                     std::cerr << "Improper access" << std::endl;
                     exit(EXIT_FAILURE) ;
                 }
             }
             return this->mat[i];
+        }
+
+        const double* row(int i) const {
+            return (*this)[i];
+        }
+        double* row(int i) {
+            return (*this)[i];
         }
 
         matNd& operator+=(const matNd & a){
@@ -345,6 +401,8 @@ namespace VecMat {
         double eigenValIm[VDIM] ={};
         matNd<VDIM> eigenVecl=0.0;
         matNd<VDIM> eigenVecr=0.0;
+        vecNd<VDIM> eigenVeclv[VDIM];
+        vecNd<VDIM> eigenVecrv[VDIM];
     };
 
     template<int VDIM>
@@ -376,6 +434,12 @@ namespace VecMat {
            VDIM);
         ans.eigenVecl=ans.eigenVecl.T();
         ans.eigenVecr=ans.eigenVecr.T();
+        for(int i =0; i<VDIM; ++i){
+        for(int j =0; j<VDIM; ++j){
+            ans.eigenVeclv[i][j] = ans.eigenVecl[i][j];
+            ans.eigenVecrv[i][j] = ans.eigenVecr[i][j];
+        }
+        }
         return ans;
     }
 
@@ -458,19 +522,6 @@ namespace VecMat {
         return result;
     }
 
-//   template<int VDIM>
-//   const matNd<VDIM> pow (const matNd<VDIM> &a, const int n){
-//       if(n == 0){
-//           matNd<VDIM> I;
-//           return I;
-//       }
-//       if(n < 0){
-//           std::cerr <<"invalid power index. Index must be non-negative integer" << std::endl;
-//           exit(EXIT_FAILURE);
-//       }
-//       //for n>1
-//       return  pow(a, n-1) * a;
-//   }
 
     template<int VDIM>
     const matNd<VDIM> pow (const matNd<VDIM> &a, const int n){
@@ -581,6 +632,7 @@ namespace VecMat {
         }
         return result;
     }
+
     template<int VDIM>
     double det (matNd<VDIM> const &a){
         return a.det();
