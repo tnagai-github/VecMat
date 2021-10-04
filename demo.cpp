@@ -24,12 +24,16 @@ int main(){
     //You can provde the double array to give arbitral initial values.
     double darray1[3] = {0.5, 1, 2.0};
     class vecNd<3> vv13(darray1);
+    class vecNd<3> vv14 {1,2,100,200};
 
     // the same applies for different dimensions. 
     class vecNd<4> vv21(1.0);
     class vecNd<4> vv22(2.0);
     double darray2[4] = {0.5, 1, 2.0, -1.0};
     class vecNd<4> vv23(darray2);
+
+    class matNd<3> I3;
+    class matNd<4> I4;
 
     // examples of vector calculations
     std::cout <<std::fixed;
@@ -38,6 +42,7 @@ int main(){
     std::cout << "vv11:" << vv11             <<std::endl;
     std::cout << "vv12:" << vv12             <<std::endl;
     std::cout << "vv13:" << vv13             <<std::endl;
+    std::cout << "vv14:" << vv14             <<std::endl;
     std::cout << "vv13[0] :" << vv13[0]  <<std::endl;
     std::cout << "vv13[1] :" << vv13[1]  <<std::endl;
     std::cout << "vv13[2] :" << vv13[2]  <<std::endl;
@@ -93,6 +98,7 @@ int main(){
     // you can give double array[VDIM][VDIM] to make arbitraly initialization
     double init_array1[3][3]= {{0,1,1.2},{5.4,0,0.9},{2.4,1.3,0}};
     class matNd<3> mat13(init_array1);
+    class matNd<3> mat14 {9,8,7,6,5,4,3,2,1};
 
     class matNd<4> mat21;
     class matNd<4> mat22(1);
@@ -110,6 +116,7 @@ int main(){
     std::cout << "mat11:" << mat11            <<std::endl;
     std::cout << "mat12:" << mat12            <<std::endl;
     std::cout << "mat13:" << mat13            <<std::endl;
+    std::cout << "mat14:" << mat14            <<std::endl;
     std::cout << "mat11[1][2]:" <<mat11[1][2]      <<std::endl;
     std::cout << "mat11[2][2]:" <<mat11[2][2]      <<std::endl;
     std::cout << "(mat11+=mat12):" << (mat11+=mat12)   <<std::endl;

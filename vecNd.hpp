@@ -1,9 +1,9 @@
 //  This program is written by Tetsuro Nagai
 
 // Simple vecotor and matrix calculation
-// No broad cast, unlike numpy.
-// operator "*" is used as the inner product, NOT as the product of each element.
-// very simple and fundermental methods for matrix are here implemented.
+// Broad cast is impossible, unlike numpy.
+// Operator "*" is used as the inner product, NOT as the product of each element.
+// Simple and fundermental methods for matrix are implemented.
 // For more complex methods, lapack should be considered. 
 // Instead of the naive implementaiton, corresponding function from cblas 
 // can be called by defining "vecNd_BLAS". 
@@ -23,8 +23,8 @@
 #define bDEBUG (false)
 #endif
 
-//#define BOUNDCHECK (false)
-#define BOUNDCHECK (true)
+#define BOUNDCHECK (false)
+//#define BOUNDCHECK (true)
 //#ifdef BOUNDCHECK
 //#define BOUNDCHECK (true)
 //#else
