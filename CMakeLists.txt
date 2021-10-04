@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.1)
 
-project(VecMat)
+project(VecMat VERSION 0.1.0)
 enable_language(CXX)
 
 set(CMAKE_CXX_STANDARD 14) 
@@ -41,7 +41,7 @@ add_executable(speed speed_test.cpp)
 #target_link_libraries(cxx_test Boost::program_options) 
 
 ##for blas
-set(BLASSUPPORT ture)
+set(BLASSUPPORT ${BLASSUPORT})
 if(BLASSUPPORT)
 message("BLAS will be used")
 add_definitions(-DvecNd_BLAS)

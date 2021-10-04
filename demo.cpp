@@ -6,8 +6,10 @@
 
 #include<numeric>
 
+#ifdef vecNd_BLAS
 #include <lapacke.h>
 #include <cblas.h>
+#endif
 
 using namespace VecMat;
 
@@ -195,7 +197,7 @@ int main(){
 
 
 
-// as operators are overloaded accumulate and so on can be readily usable
+// as operators are overloaded, STL related function is usable
     std::vector< class matNd<3>> mat_array1(3);
 
     std::cout << mat_array1 << std::endl;
@@ -215,19 +217,16 @@ int main(){
     class matNd<4> vl2 ;
     class matNd<4> vr2 ;
 
-    //LAPACKE_dgeev(LAPACK_ROW_MAJOR, 'N', 'V', 
-    //                      4, &(mat23v2.mat[0][0]), 4, wr, 
-    //                      wi, vl[0], 4,  vr[0], 
-    //                      4 );
-    //LAPACKE_dgeev(LAPACK_COL_MAJOR, 'N', 'V', 
+#ifdef vecNd_BLAS
+	//direct call of blas
     LAPACKE_dgeev(LAPACK_ROW_MAJOR, 'N', 'V', 
-                          4, mat23v2.p, 4, wr, 
+                         4, mat23v2.p, 4, wr, 
                           wi, vl2.p, 4,  vr2.p, 
                           4 );
-
+	//called with wrapper 
     auto ans2 = wrap_dgeev(mat23);
 
-    std::cout << "*wrapper's*" << std::endl;
+    std::cout << " *wrapper's results*" << std::endl;
     std::cout << ans2.eigenValRe << std::endl;
     std::cout << ans2.eigenValIm << std::endl;
     std::cout << ans2.eigenVecl << std::endl;
@@ -235,13 +234,9 @@ int main(){
     std::cout << ans2 << std::endl;
     std::cout << "***********" << std::endl;
 
-    //std::cout << mat23 << std::endl;
-    //for(int i=0; i<4;i++){
-    //    std::cout << vr[i] << std::endl;
-    //}
-
-    std::cout << wr << std::endl;
+    //std::cout << wr << std::endl;
     
+	// to collect the results obtained by a direct call
     class matNd<4> tmp(vr2.T()); 
     class vecNd<4>  eigenv0(tmp[0]);
     class vecNd<4>  eigenv1(tmp[1]);
@@ -249,13 +244,15 @@ int main(){
     class vecNd<4>  eigenv3(tmp[3]);
 
 
-    std::cout << "*eigenvecs*" << std::endl;
+    std::cout << " *direct call of lapack *" << std::endl;
     std::cout << eigenv0 << std::endl;
     std::cout << eigenv1 << std::endl;
     std::cout << eigenv2 << std::endl;
     std::cout << eigenv3 << std::endl;
 
     std::cout << "******" << std::endl;
+
+    std::cout << " *check Mv=av **" << std::endl;
     std::cout << mat23*eigenv0 << std::endl;
     std::cout << wr[0]*eigenv0 << std::endl;
 
@@ -270,13 +267,14 @@ int main(){
 
 
     
-//    double cblas_ddot(const int N, const double *X, const int incX,
-//                  const douggble *Y, const int incY);
 
     double ans;
     ans = cblas_ddot(vv11.size, vv11.p, 1, vv12.p,1);
+//    double cblas_ddot(const int N, const double *X, const int incX,
+//                  const douggble *Y, const int incY);
     std::cout << ans << std::endl;
     std::cout << vv11*vv12 << std::endl;
+#endif
 
 
 }

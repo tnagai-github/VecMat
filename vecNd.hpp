@@ -424,6 +424,7 @@ namespace VecMat {
         return os;
     }
 
+	#ifdef vecNd_BLAS
     template<int VDIM>
     t_ans_ev<VDIM> wrap_dgeev(const matNd<VDIM> &obj) {
         matNd<VDIM> copy = obj;
@@ -442,6 +443,7 @@ namespace VecMat {
         }
         return ans;
     }
+	#endif
 
     template<int VDIM>
     std::ostream& operator << (std::ostream &os, const matNd<VDIM>& mat){
