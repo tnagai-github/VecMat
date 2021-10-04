@@ -26,7 +26,7 @@ int main(){
     //You can provde the double array to give arbitral initial values.
     double darray1[3] = {0.5, 1, 2.0};
     class vecNd<3> vv13(darray1);
-    class vecNd<3> vv14 {1,2,100,200};
+    class vecNd<3> vv14 {1,2,100};
 
     // the same applies for different dimensions. 
     class vecNd<4> vv21(1.0);
