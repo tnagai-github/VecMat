@@ -49,12 +49,22 @@ namespace VecMat {
         //double*  end()  {return vec+VDIM;};
 
         //copy construstor
-        vecNd(const vecNd & ) = default;
-        vecNd& operator= (const vecNd &) = default;
+        vecNd (const vecNd & a) {
+            for (int i = 0; i<size; ++i){
+                vec[i]=a.vec[i];
+			}
+		}
 
-        //move constructor
-        vecNd(vecNd && ) = default;
-        vecNd& operator= (vecNd &&)  = default;
+        vecNd& operator= (const vecNd & a){
+            for (int i = 0; i<size; ++i){
+                this->vec[i]=a.vec[i];
+			}
+			return *this;
+		}
+
+        ////move constructor
+        //vecNd(vecNd && ) = default;
+        //vecNd& operator= (vecNd &&)  = default;
 
         vecNd(std::initializer_list<double> list){
             if(list.size() != size){
@@ -194,6 +204,12 @@ namespace VecMat {
     const vecNd<VDIM> operator - (const vecNd<VDIM> &a, const vecNd<VDIM> &b){
         return vecNd<VDIM>(a)-=b;
     }
+
+    template <int VDIM > 
+    const vecNd<VDIM> operator - (const vecNd<VDIM> &a){
+        return vecNd<VDIM>(a)*=-1.0;
+    }
+
     template <int VDIM > 
     const vecNd<VDIM> operator * (const double a, const vecNd<VDIM>&b){
         return vecNd<VDIM>(b)*=a;
@@ -222,9 +238,9 @@ namespace VecMat {
         double * const p = mat[0];
         static constexpr int size = VDIM;
             
-        //move constructor
-        matNd(matNd&&) = default;
-        matNd& operator=(matNd&&) = default;
+        ////move constructor
+        //matNd(matNd&&) = default;
+        //matNd& operator=(matNd&&) = default;
 
         matNd(std::initializer_list<double> list){
             if(list.size() != size*size){
@@ -550,6 +566,11 @@ namespace VecMat {
     }
 
 
+    template<int VDIM>
+	const matNd<VDIM> operator- (const matNd<VDIM> &a){
+	    return matNd<VDIM>(a)*=-1.0;
+	}
+        
     // outerproduct is defined for N=VDIM only. this should be practical enough.
     
     const vecNd<3> cross(const vecNd<3> &a, const vecNd<3> &b){
