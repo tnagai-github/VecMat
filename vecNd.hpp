@@ -5,9 +5,8 @@
 // Operator "*" is used as the inner product, NOT as the product of each element.
 // Simple and fundermental methods for matrix are implemented.
 // For more complex methods, lapack should be considered. 
-// Instead of the naive implementaiton, corresponding function from cblas 
-// can be called by defining "vecNd_BLAS". 
-// Athgough not tested, this should be be important when the dimension of problems is large. 
+// Instead of the naive implementaiton, cblas can be internally called by defining "vecNd_BLAS". 
+// Athgough speeds have not been compared yet, blas should be advantageous when the dimensions of problem are large. 
 
 //include guard
 #ifndef vecNd_FILE_
