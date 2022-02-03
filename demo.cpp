@@ -37,6 +37,10 @@ int main(){
     class matNd<3> I3;
     class matNd<4> I4;
 
+    class matNd<4> I5;
+	I5=I4;
+	
+
     // examples of vector calculations
     std::cout <<std::fixed;
     std::cout << "vecNd<VDIM>"              <<std::endl;
