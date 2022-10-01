@@ -80,6 +80,7 @@ int main(){
     std::cout << "vv23[1] :" << vv23[1]  <<std::endl;
     std::cout << "vv23[2] :" << vv23[2]  <<std::endl;
     std::cout << "vv23[3] :" << vv23[3]  <<std::endl;
+    std::cout << "vv23.at(3) :" << vv23.at(3)  <<std::endl;
     std::cout << "Inner-product"              <<std::endl;
     std::cout << " vv23*vv22     :" << vv23*vv22        <<std::endl;
     std::cout << " dot(vv23,vv22):" << dot(vv23,vv22)   <<std::endl;

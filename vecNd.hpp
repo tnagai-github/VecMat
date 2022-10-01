@@ -110,6 +110,9 @@ namespace VecMat {
         inline double & operator [] (const int i );
         inline double   operator [] (const int i ) const;
 
+        inline double & at (const int i );
+        inline double   at (const int i ) const;
+
         vecNd& operator+= (const vecNd & a) {
             for(int i=0; i<size; i++){
                 this->vec[i]+=a.vec[i];
@@ -157,22 +160,29 @@ namespace VecMat {
 
     template <int VDIM > 
     double & vecNd<VDIM>::operator [] (const int i ) {
-        if(BOUNDCHECK){
-            if(i<0 or VDIM<=i){
-                std::cerr << "Improper access" << std::endl;
-                exit(EXIT_FAILURE) ;
-            }
-        }
         return this->vec[i];
     }
 
     template <int VDIM > 
     double vecNd<VDIM>::operator [] (const int i ) const {
-        if(BOUNDCHECK){
-            if(i<0 or VDIM<=i){
-                std::cerr << "Improper access" << std::endl;
-                exit(EXIT_FAILURE) ;
-            }
+        return this->vec[i];
+    }
+
+
+    template <int VDIM > 
+    double & vecNd<VDIM>::at (const int i ) {
+        if(i<0 or VDIM<=i){
+            std::cerr << "Improper access" << std::endl;
+            exit(EXIT_FAILURE) ;
+        }
+        return this->vec[i];
+    }
+
+    template <int VDIM > 
+    double vecNd<VDIM>::at (const int i ) const {
+        if(i<0 or VDIM<=i){
+            std::cerr << "Improper access" << std::endl;
+            exit(EXIT_FAILURE) ;
         }
         return this->vec[i];
     }
@@ -543,8 +553,8 @@ namespace VecMat {
     template<int VDIM>
     const matNd<VDIM> pow (const matNd<VDIM> &a, const int n){
         if(n == 0){
-            matNd<VDIM> I;
-            return I;
+            matNd<VDIM> E;
+            return E;
         }
         if(n < 0){
             std::cerr <<"invalid power index. Index must be non-negative integer" << std::endl;
