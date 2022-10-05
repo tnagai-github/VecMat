@@ -49,6 +49,8 @@ int main(){
     std::cout << "vv12:" << vv12             <<std::endl;
     std::cout << "vv13:" << vv13             <<std::endl;
     std::cout << "vv14:" << vv14             <<std::endl;
+    std::cout << "+vv14:" << +vv14             <<std::endl;
+    std::cout << "-vv14:" << -vv14             <<std::endl;
     std::cout << "vv13[0] :" << vv13[0]  <<std::endl;
     std::cout << "vv13[1] :" << vv13[1]  <<std::endl;
     std::cout << "vv13[2] :" << vv13[2]  <<std::endl;
@@ -124,6 +126,8 @@ int main(){
     std::cout << "mat12:" << mat12            <<std::endl;
     std::cout << "mat13:" << mat13            <<std::endl;
     std::cout << "mat14:" << mat14            <<std::endl;
+    std::cout << "+mat14:" << +mat14            <<std::endl;
+    std::cout << "-mat14:" << -mat14            <<std::endl;
     std::cout << "mat11[1][2]:" <<mat11[1][2]      <<std::endl;
     std::cout << "mat11[2][2]:" <<mat11[2][2]      <<std::endl;
     std::cout << "(mat11+=mat12):" << (mat11+=mat12)   <<std::endl;
