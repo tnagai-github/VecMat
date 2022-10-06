@@ -44,7 +44,7 @@ namespace VecMat {
         double * const p = vec;
         static constexpr int size = VDIM;
         
-        vecNd();
+        vecNd(); // zero vector
         vecNd(std::initializer_list<double> list);
         vecNd(const double x);
         vecNd(const double vec_in[VDIM]);
@@ -82,23 +82,129 @@ namespace VecMat {
     template <int VDIM > 
     double abs(const vecNd<VDIM> &a);
     template <int VDIM > 
-    std::ostream& operator << (std::ostream &os, const vecNd<VDIM>& vv);
+    const vecNd<VDIM> operator+ (const vecNd<VDIM> &a, const vecNd<VDIM> &b);
     template <int VDIM > 
-    const vecNd<VDIM> operator + (const vecNd<VDIM> &a, const vecNd<VDIM> &b);
+    const vecNd<VDIM> operator- (const vecNd<VDIM> &a, const vecNd<VDIM> &b);
     template <int VDIM > 
-    const vecNd<VDIM> operator - (const vecNd<VDIM> &a, const vecNd<VDIM> &b);
+    const vecNd<VDIM> operator* (const double a, const vecNd<VDIM>&b);
     template <int VDIM > 
-    const vecNd<VDIM> operator * (const double a, const vecNd<VDIM>&b);
+    double operator* (const vecNd<VDIM> &a, const vecNd<VDIM> &b);   //dot product (unlike octave...)
     template <int VDIM > 
-    double operator * (const vecNd<VDIM> &a, const vecNd<VDIM> &b);
-    template <int VDIM > 
-    const vecNd<VDIM> operator * (const vecNd<VDIM> &a, const double b);
+    const vecNd<VDIM> operator* (const vecNd<VDIM> &a, const double b);
     template <int VDIM > 
     const vecNd<VDIM> operator/ (const vecNd<VDIM> &a, const double b);
+    template <int VDIM > 
+    std::ostream& operator << (std::ostream &os, const vecNd<VDIM>& vv);
+
+    template <int VDIM > 
+    class matNd {
+        public:
+        double mat[VDIM][VDIM] ;
+        double * const p = mat[0];
+        static constexpr int size = VDIM;
+            
+        
+        matNd(); // unit matrix
+        matNd(std::initializer_list<double> list);
+        matNd(const matNd<VDIM> &obj);
+        matNd(double x);
+
+        matNd(double mat_in[VDIM][VDIM]){
+            for(int i =0 ; i < VDIM; ++i){                    
+                for(int j =0 ; j < VDIM; ++j){                    
+                    mat[i][j] = mat_in[i][j] ;
+                }
+            }
+        }
+
+        matNd(vecNd<VDIM> vec[VDIM]);
+
+        matNd& operator=(const matNd & a);
 
 
+        double* operator [] (const int i );
+        const double* operator [] (const int i ) const ;
 
 
+        const double* row(int i) const ;
+        double* row(int i) ;
+
+        matNd& operator+=(const matNd & a);
+        matNd& operator-=(const matNd & a);
+
+        matNd& operator*= (const double a) ;
+        matNd& operator*= (const matNd a) ;
+
+        matNd& operator/= (const double a) ;
+
+        const matNd T() const; //transpose
+        //const matNd pivotA() const ;
+        const matNd triangle() const ;
+        double det() const ;
+
+    };
+    
+    template<int VDIM>
+    std::ostream& operator << (std::ostream &os, const matNd<VDIM>& mat);
+    template<int VDIM>
+    const matNd<VDIM>  operator+ (const matNd<VDIM> &a, const matNd<VDIM> &b);
+    template<int VDIM>
+    const matNd<VDIM>  operator- (const matNd<VDIM> &a, const matNd<VDIM> &b);
+    template<int VDIM>
+    const matNd<VDIM>  operator* (const matNd<VDIM> &a, const matNd<VDIM> &b);
+    template<int VDIM>
+    const matNd<VDIM>  operator* (const matNd<VDIM> &a, const double b);
+    template<int VDIM>
+    const matNd<VDIM>  operator* (const double a, const matNd<VDIM> &b);
+    template<int VDIM>
+    const vecNd<VDIM>  operator* (const matNd<VDIM> &a, const vecNd<VDIM> &b);
+    template<int VDIM>
+    const vecNd<VDIM> operator* (const vecNd<VDIM> &a, const matNd<VDIM> &b);
+    template<int VDIM>
+    const matNd<VDIM>  operator/ (const matNd<VDIM> &a, const double b);
+    template<int VDIM>
+    inline const matNd<VDIM> operator+ (const matNd<VDIM> &a);
+    template<int VDIM>
+    inline const matNd<VDIM> operator- (const matNd<VDIM> &a);
+
+    template<int VDIM>
+    const matNd<VDIM> pow (const matNd<VDIM> &a, const int n);
+
+    // outerproduct is defined for VDIM=3 only. This should be practical enough.
+    const vecNd<3> cross(const vecNd<3> &a, const vecNd<3> &b);
+
+    template<int VDIM>
+    const matNd<VDIM> triangle (const matNd<VDIM> & a )  ;
+    template<int VDIM>
+    double det (matNd<VDIM> const &a);
+    // rotation matrice are difned for VDIM=3 only. This should be practical enough.
+    const matNd<3> rot_by_x(double theta);
+    const matNd<3> rot_by_y(double theta);
+    const matNd<3> rot_by_z(double theta);
+
+    //for wrapper to engenvectors 
+    template<int VDIM>
+    class t_ans_ev{
+        public:
+        double eigenValRe[VDIM] ={};
+        double eigenValIm[VDIM] ={};
+        matNd<VDIM> eigenVecl=0.0;
+        matNd<VDIM> eigenVecr=0.0;
+        vecNd<VDIM> eigenVeclv[VDIM];
+        vecNd<VDIM> eigenVecrv[VDIM];
+    };
+
+
+    template<int VDIM>
+    std::ostream& operator << (std::ostream &os, const t_ans_ev<VDIM>& obj);
+
+    #ifdef vecNd_BLAS
+    template<int VDIM>
+    t_ans_ev<VDIM> wrap_dgeev(const matNd<VDIM> &obj) ;
+    #endif
+
+
+    //defintions 
     template <int VDIM > 
     inline vecNd<VDIM>::vecNd(){
         for(auto& each : vec){
@@ -295,114 +401,8 @@ namespace VecMat {
     }
 
 
-    template <int VDIM > 
-    class matNd {
-        public:
-        double mat[VDIM][VDIM] ;
-        double * const p = mat[0];
-        static constexpr int size = VDIM;
-            
-        
-        matNd(); // unit matrix
-        matNd(std::initializer_list<double> list);
-        matNd(const matNd<VDIM> &obj);
-        matNd(double x);
 
-        matNd(double mat_in[VDIM][VDIM]){
-            for(int i =0 ; i < VDIM; ++i){                    
-                for(int j =0 ; j < VDIM; ++j){                    
-                    mat[i][j] = mat_in[i][j] ;
-                }
-            }
-        }
-
-        matNd(vecNd<VDIM> vec[VDIM]);
-
-        matNd& operator=(const matNd & a);
-
-
-        double* operator [] (const int i );
-        const double* operator [] (const int i ) const ;
-
-
-        const double* row(int i) const ;
-        double* row(int i) ;
-
-        matNd& operator+=(const matNd & a);
-        matNd& operator-=(const matNd & a);
-
-        matNd& operator*= (const double a) ;
-        matNd& operator*= (const matNd a) ;
-
-        matNd& operator/= (const double a) ;
-
-        const matNd T() const; //transpose
-        //const matNd pivotA() const ;
-        const matNd triangle() const ;
-        double det() const ;
-
-    };
-    
-    template<int VDIM>
-    std::ostream& operator << (std::ostream &os, const matNd<VDIM>& mat);
-    template<int VDIM>
-    const matNd<VDIM>  operator+ (const matNd<VDIM> &a, const matNd<VDIM> &b);
-    template<int VDIM>
-    const matNd<VDIM>  operator- (const matNd<VDIM> &a, const matNd<VDIM> &b);
-    template<int VDIM>
-    const matNd<VDIM>  operator* (const matNd<VDIM> &a, const matNd<VDIM> &b);
-    template<int VDIM>
-    const matNd<VDIM>  operator* (const matNd<VDIM> &a, const double b);
-    template<int VDIM>
-    const matNd<VDIM>  operator* (const double a, const matNd<VDIM> &b);
-    template<int VDIM>
-    const vecNd<VDIM>  operator* (const matNd<VDIM> &a, const vecNd<VDIM> &b);
-    template<int VDIM>
-    const vecNd<VDIM> operator* (const vecNd<VDIM> &a, const matNd<VDIM> &b);
-    template<int VDIM>
-    const matNd<VDIM>  operator/ (const matNd<VDIM> &a, const double b);
-    template<int VDIM>
-    inline const matNd<VDIM> operator+ (const matNd<VDIM> &a);
-    template<int VDIM>
-    inline const matNd<VDIM> operator- (const matNd<VDIM> &a);
-
-    template<int VDIM>
-    const matNd<VDIM> pow (const matNd<VDIM> &a, const int n);
-
-    // outerproduct is defined for N=VDIM only. this should be practical enough.
-    const vecNd<3> cross(const vecNd<3> &a, const vecNd<3> &b);
-
-    template<int VDIM>
-    const matNd<VDIM> triangle (const matNd<VDIM> & a )  ;
-    template<int VDIM>
-    double det (matNd<VDIM> const &a);
-    const matNd<3> rot_by_x(double theta);
-    const matNd<3> rot_by_y(double theta);
-    const matNd<3> rot_by_z(double theta);
-
-    //for wrapper to engenvectors 
-    template<int VDIM>
-    class t_ans_ev{
-        public:
-        double eigenValRe[VDIM] ={};
-        double eigenValIm[VDIM] ={};
-        matNd<VDIM> eigenVecl=0.0;
-        matNd<VDIM> eigenVecr=0.0;
-        vecNd<VDIM> eigenVeclv[VDIM];
-        vecNd<VDIM> eigenVecrv[VDIM];
-    };
-
-
-    template<int VDIM>
-    std::ostream& operator << (std::ostream &os, const t_ans_ev<VDIM>& obj);
-
-    #ifdef vecNd_BLAS
-    template<int VDIM>
-    t_ans_ev<VDIM> wrap_dgeev(const matNd<VDIM> &obj) ;
-    #endif
-
-
-     // Definitions starts 
+     // Definitions regarding matNd start from here. 
      template<int VDIM>
      inline matNd<VDIM>::matNd(){ // unit matrix
          for(int i =0 ; i < VDIM; ++i){                    
