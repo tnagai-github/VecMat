@@ -3,6 +3,7 @@
 #include<vector>
 #include "prettyprint.hpp"
 #include "vecNd.hpp"
+#include "vec.hpp"
 
 #include<numeric>
 
@@ -286,4 +287,70 @@ int main(){
 #endif
 
 
+
+    Vec vecA(3,1.0/sqrt(3.0));
+    Vec vecB(std::vector<double>{1,-1,1});
+    vecA[1] = 2;
+    Vec vecC(vecA);
+
+    std::cout << "vecA          " << vecA           << std::endl;
+    std::cout << "vecA          " << vecA           << std::endl;
+    std::cout << "vecA.dot(vecA)" << vecA.dot(vecA) << std::endl;
+    std::cout << "vecA.abs()    " << vecA.abs()     << std::endl;
+    std::cout << "vecA.sum()    " << vecA.sum()     << std::endl;
+    std::cout << "vecA*vecB     " << vecA*vecB      << std::endl;
+    std::cout << "(vecB)        " << (vecB)         << std::endl;
+    std::cout << "(vecB*=5)     " << (vecB*=5)      << std::endl;
+    std::cout << "(vecB/=5)     " << (vecB/=5)      << std::endl;
+    std::cout << "(vecB-=vecA)  " << (vecB-=vecA)   << std::endl;
+    std::cout << "(+vecB)       " << (+vecB)        << std::endl;
+    std::cout << "(-vecB)       " << (-vecB)        << std::endl;
+
+    Mat matA(std::vector<std::vector<double>>{std::vector<double>{1,2,3}, std::vector<double>{4,5,6}, std::vector<double>{7,8,9}, std::vector<double>{10,11,12}});
+
+    Mat matB(std::vector<std::vector<double>>{std::vector<double>{1,1,1}, std::vector<double>{2,2,2}, std::vector<double>{3,3,3}, std::vector<double>{12,11,10}});
+    Mat matC(matB);
+    Mat matD=(matB);
+    //Mat matE=(std::vector<std::vector<double>>{std::vector<double>{1,1,1}, std::vector<double>{2,3,2}, std::vector<double>{3,3,4}});
+    Mat matE=(std::vector<std::vector<double>>{std::vector<double>{1,1}, std::vector<double>{0,0}});
+    matD[1][2]+=100;
+    std::cout << "matA          " << matA           << std::endl;
+    std::cout << "matB          " << matB           << std::endl;
+    std::cout << "matC          " << matC           << std::endl;
+    std::cout << "matC[0][2]    " << matC[0][2]    << std::endl;
+    matC[0][2] = 999 ;
+    std::cout << "matC[0][2]    " << matC[0][2]    << std::endl;
+    std::cout << "matC          " << matC          << std::endl;
+    std::cout << "matD          " << matD          << std::endl;
+    std::cout << "matD+=matC    " << (matD+=matC)    << std::endl;
+    std::cout << "+matD         " << (+matD)    << std::endl;
+    std::cout << "-matD         " << (-matD)    << std::endl;
+    std::cout << "matD.T()         " << (matD.T())    << std::endl;
+    std::cout << "matD*matD.T()    " << (matD*matD.T())    << std::endl;
+    std::cout << "matD*matD.T()    " << (matD*matD.T())    << std::endl;
+    std::cout << "matD*vecB        " << (matD*vecB)    << std::endl;
+    std::cout << "vecB*matD        " << (vecB*matD.T())    << std::endl;
+    std::cout << "matD/100.0       " << (matD/100.0)    << std::endl;
+    std::cout << "matD*10.0        " << (matD*10.0)    << std::endl;
+    std::cout << "10.0*matD*10.0  " << (10.0*matD*10.0)    << std::endl;
+    std::cout << "matE             " <<matE           << std::endl;
+    std::cout << "matE.trace() " <<matE.trace()   << std::endl;
+    std::cout << "matE.triangle() " <<matE.triangle()   << std::endl;
+    std::cout << "matE.det()      " <<matE.det()   << std::endl;
+
+    std::cout << "**************************"    << std::endl;
+    auto ans3=wrap_dgeev(matE) ;
+    std::cout << "Eigen vectors \n " << ans3   << std::endl;
+   
+    //check
+    std::cout << "Left vectors"    << std::endl;
+    for(size_t i = 0; i<matE.mm.size(); i++){
+      std::cout << " " << (ans3.eigenVeclv[i]*ans3.eigenValRe[i])   << std::endl;
+      std::cout << " " << (ans3.eigenVeclv[i]*matE)   << std::endl;
+    std::cout << "Right vectors"    << std::endl;
+    for(size_t i = 0; i<matE.mm.size(); i++){
+      std::cout << " " << (ans3.eigenVecrv[i]*ans3.eigenValRe[i])   << std::endl;
+      std::cout << " " << (matE*ans3.eigenVecrv[i])   << std::endl;
+    }
+    }
 }

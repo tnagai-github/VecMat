@@ -14,7 +14,7 @@
 
 #include<iostream>
 #include <initializer_list>
-#include "prettyprint.hpp"
+#include "cxx-prettyprint/prettyprint.hpp"
 
 #ifdef DEBUG
 #define bDEBUG (true)
@@ -37,7 +37,7 @@
 
 /*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*/
 namespace VecMat {
-    template <int VDIM > 
+    template <int VDIM> 
     class vecNd {
         public: 
         double vec[VDIM];
