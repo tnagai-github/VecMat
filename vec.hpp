@@ -189,6 +189,9 @@ namespace VecMat {
             ans.eigenVecrv[j][i] = eigenVecr[i*VDIM+j];
           }
         }
+        delete [] in;
+        delete [] eigenVecl;
+        delete [] eigenVecr;
         return ans;
     }
     #endif

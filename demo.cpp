@@ -39,8 +39,8 @@ int main(){
     class matNd<4> I4;
 
     class matNd<4> I5;
-	I5=I4;
-	
+    I5=I4;
+
 
     // examples of vector calculations
     std::cout <<std::fixed;
@@ -312,7 +312,7 @@ int main(){
     Mat matC(matB);
     Mat matD=(matB);
     //Mat matE=(std::vector<std::vector<double>>{std::vector<double>{1,1,1}, std::vector<double>{2,3,2}, std::vector<double>{3,3,4}});
-    Mat matE=(std::vector<std::vector<double>>{std::vector<double>{1,1}, std::vector<double>{0,0}});
+    Mat matE=(std::vector<std::vector<double>>{std::vector<double>{1,1}, std::vector<double>{1,2}});
     matD[1][2]+=100;
     std::cout << "matA          " << matA           << std::endl;
     std::cout << "matB          " << matB           << std::endl;
@@ -347,10 +347,10 @@ int main(){
     for(size_t i = 0; i<matE.mm.size(); i++){
       std::cout << " " << (ans3.eigenVeclv[i]*ans3.eigenValRe[i])   << std::endl;
       std::cout << " " << (ans3.eigenVeclv[i]*matE)   << std::endl;
+    }
     std::cout << "Right vectors"    << std::endl;
     for(size_t i = 0; i<matE.mm.size(); i++){
       std::cout << " " << (ans3.eigenVecrv[i]*ans3.eigenValRe[i])   << std::endl;
       std::cout << " " << (matE*ans3.eigenVecrv[i])   << std::endl;
-    }
     }
 }
