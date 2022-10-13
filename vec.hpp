@@ -144,7 +144,7 @@ namespace VecMat {
     #ifdef vecNd_BLAS
     inline t_ans_ev_vec wrap_dgeev(const Mat &obj) {
         if(obj.mm.size()!=obj.mm[0].size()){
-          std::cerr << "square matrix only is allowd." <<std::endl;
+          std::cerr << "square matrix only is allowed." <<std::endl;
           exit(EXIT_FAILURE);
         }
 
@@ -254,6 +254,7 @@ namespace VecMat {
     //
     inline Vec& Vec::operator+= (const Vec & a) {
         if(this->size() != a.size()){
+          std::cerr << "vector sizes do not much" <<std::endl;
           exit(EXIT_FAILURE);
         }
         for(int i=0; i< this->size(); i++){
@@ -264,6 +265,7 @@ namespace VecMat {
 
     inline Vec& Vec::operator-= (const Vec & a) {
         if(this->size() != a.size()){
+          std::cerr << "vector sizes do not much" <<std::endl;
           exit(EXIT_FAILURE);
         }
         for(int i=0; i< this->size(); i++){
@@ -286,6 +288,7 @@ namespace VecMat {
 
     inline double Vec::dot (const Vec &a) const {
         if(this->size() != a.size()){
+          std::cerr << "vector sizes do not much" <<std::endl;
           exit(EXIT_FAILURE);
         }
         double sum=0;
@@ -447,9 +450,11 @@ namespace VecMat {
     
     inline Mat& Mat::operator+=(const Mat & a){
         if(this->mm.size() != a.mm.size()){
+          std::cerr << "Matrix sizes do not much" <<std::endl;
           exit(EXIT_FAILURE);
         }
         if(this->mm[0].size() != a.mm[0].size()){
+          std::cerr << "Matrix sizes do not much" <<std::endl;
           exit(EXIT_FAILURE);
         }
 
@@ -611,7 +616,7 @@ namespace VecMat {
     double Mat::trace () const {
         double res=0;
         if(this->mm.size() != this->mm[0].size()){
-          std::cerr << "square matrix only is allowd." <<std::endl;
+          std::cerr << "square matrix only is allowed." <<std::endl;
           exit(EXIT_FAILURE);
         }
         for(size_t i = 0; i < mm.size(); i++){
@@ -623,7 +628,7 @@ namespace VecMat {
     const Mat Mat::triangle () const {
         Mat result=(*this);
         if(this->mm.size() != this->mm[0].size()){
-          std::cerr << "square matrix only is allowd." <<std::endl;
+          std::cerr << "square matrix only is allowed." <<std::endl;
           exit(EXIT_FAILURE);
         }
 
