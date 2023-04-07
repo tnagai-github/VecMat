@@ -177,6 +177,9 @@ namespace VecMat {
     const matNd<VDIM> triangle (const matNd<VDIM> & a )  ;
     template<int VDIM>
     double det (matNd<VDIM> const &a);
+    
+    // rotation for two-dimensional space
+    const matNd<2> rot_mat(double theta);
     // rotation matrice are difned for VDIM=3 only. This should be practical enough.
     const matNd<3> rot_by_x(double theta);
     const matNd<3> rot_by_y(double theta);
@@ -816,6 +819,13 @@ namespace VecMat {
         return a.det();
     }
 
+    //rotatio in two-dim space
+    inline const matNd<2> rot_mat(double theta){
+        const int VDIM=2;
+        double array[VDIM][VDIM]={{cos(theta), -sin(theta)}, {sin(theta), cos(theta)}};
+        matNd<VDIM> result(array);
+        return result;
+    }
     // some more special function for VDIM = 3
     inline const matNd<3> rot_by_x(double theta){
         const int VDIM=3;

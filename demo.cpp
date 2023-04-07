@@ -183,6 +183,15 @@ int main(){
     std::cout << "rot_by_x(45/360.*2*M_PI): " << rot_by_x(45/360.*2*M_PI) <<std::endl;
     std::cout << "rot_by_y(45/360.*2*M_PI): " << rot_by_y(45/360.*2*M_PI) <<std::endl;
     std::cout << "rot_by_z(45/360.*2*M_PI): " << rot_by_z(45/360.*2*M_PI) <<std::endl;
+    std::cout << "rot_by_z(45 deg) *  [1, 0, 0] : " << rot_by_z(45/360.*2*M_PI)*vecNd<3>{1,0,0} <<std::endl;
+    std::cout << "rot_by_z(45 deg) *  [0, 1, 0] : " << rot_by_z(45/360.*2*M_PI)*vecNd<3>{0,1,0} <<std::endl;
+    std::cout << "rot_by_x(45 deg) *  [0, 1, 0] : " << rot_by_x(45/360.*2*M_PI)*vecNd<3>{0,1,0} <<std::endl;
+    std::cout << "rot_by_x(45 deg) *  [0, 0, 1] : " << rot_by_x(45/360.*2*M_PI)*vecNd<3>{0,0,1} <<std::endl;
+    std::cout << "rot_by_y(45 deg) *  [0, 0, 1] : " << rot_by_y(45/360.*2*M_PI)*vecNd<3>{0,0,1} <<std::endl;
+    std::cout << "rot_by_y(45 deg) *  [1, 0, 0] : " << rot_by_y(45/360.*2*M_PI)*vecNd<3>{1,0,0} <<std::endl;
+    std::cout << "rot_mat(45/360.*2*M_PI): " << rot_mat(45/360.*2*M_PI) <<std::endl;
+    std::cout << "rot_mat(45 deg) * [1, 0]: " << rot_mat(45/360.*2*M_PI)*vecNd<2>{1,0}  <<std::endl;
+    std::cout << "rot_mat(45 deg) * [0, 1]: " << rot_mat(45/360.*2*M_PI)*vecNd<2>{0,1}  <<std::endl;
     std::cout << "***************************"              <<std::endl;
 
 
