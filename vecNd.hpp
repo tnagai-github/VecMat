@@ -195,6 +195,14 @@ namespace VecMat {
         matNd<VDIM> eigenVecr=0.0;
         vecNd<VDIM> eigenVeclv[VDIM];
         vecNd<VDIM> eigenVecrv[VDIM];
+        const matNd<VDIM> Q() const {
+          return eigenVecr.T();
+        };
+        const matNd<VDIM> QT() const {
+          return eigenVecr;
+        };
+
+
     };
 
 
@@ -613,7 +621,52 @@ namespace VecMat {
         }
         return ans;
     }
+
+    template<int VDIM>
+    inline t_ans_ev<VDIM> wrap_dsyev(const matNd<VDIM> &obj) {
+        matNd<VDIM> copy = obj;
+        t_ans_ev<VDIM>  ans;
+        LAPACKE_dsyev(LAPACK_ROW_MAJOR, 'V', 'L', 
+           VDIM, copy.p, VDIM, ans.eigenValRe);
+        for(int i=0; i<VDIM; i++){
+        for(int j=0; j<VDIM; j++){
+          ans.eigenVecr[i][j]=copy[j][i];
+          ans.eigenVecl[i][j]=copy[j][i];
+        }
+        }
+        for(int i =0; i<VDIM; ++i){
+        for(int j =0; j<VDIM; ++j){
+            ans.eigenVeclv[i][j] = ans.eigenVecl[i][j];
+            ans.eigenVecrv[i][j] = ans.eigenVecr[i][j];
+        }
+        }
+        return ans;
+    }
+
+    template<int VDIM>
+    bool is_positive_difinite_dsy (matNd<VDIM> mat){
+      auto ans = wrap_dsyev(mat);
+      for(auto const each: ans.eigenValRe){
+        if(each<=0){
+          return false;
+        }
+      }
+      return true;
+    }
     #endif
+
+    template<int VDIM>
+    inline const bool is_symetric(const matNd<VDIM> &a){
+        for (int i=0 ; i <VDIM ; ++i){
+        for (int j=0 ; j <VDIM ; ++j){
+            if(a[i][j] != a[j][i]){
+              return false;
+            }
+        }
+        }
+        return true;
+    }
+
 
     template<int VDIM>
     std::ostream& operator << (std::ostream &os, const matNd<VDIM>& mat){
@@ -742,7 +795,6 @@ namespace VecMat {
         }
         return result;
     }
-
 
     template<int VDIM>
     inline const matNd<VDIM> matNd<VDIM>::triangle () const {

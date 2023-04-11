@@ -245,7 +245,7 @@ int main(){
 	//called with wrapper 
     auto ans2 = wrap_dgeev(mat23);
 
-    std::cout << " *wrapper's results*" << std::endl;
+    std::cout << " *wrapper's results(dgeev)*" << std::endl;
     std::cout << ans2.eigenValRe << std::endl;
     std::cout << ans2.eigenValIm << std::endl;
     std::cout << ans2.eigenVecl << std::endl;
@@ -253,7 +253,38 @@ int main(){
     std::cout << ans2 << std::endl;
     std::cout << "***********" << std::endl;
 
-    //std::cout << wr << std::endl;
+
+    double init_array3[4][4]= {{2,5,0,1},{5,5,1,1},{0,1,4,0},{1,1,0,1}};
+    class matNd<4> mat24(init_array3);
+    std::cout << "mat24" << mat24 << std::endl;
+
+    std::cout << "***********" << std::endl;
+    std::cout << " *is_symetrici(mat24):  " << is_symetric(mat24) << std::endl;
+    std::cout << " *is_positive_difinite_dsy(mat24):  " << is_positive_difinite_dsy(mat24) << std::endl;
+    std::cout << "***********" << std::endl;
+
+    ans2 = wrap_dgeev(mat24);
+    std::cout << " *wrapper's results(dgeev, mat24)*" << std::endl;
+    std::cout << ans2.eigenValRe << std::endl;
+    std::cout << ans2.eigenValIm << std::endl;
+    std::cout << ans2.eigenVecl << std::endl;
+    std::cout << ans2.eigenVecr << std::endl;
+    std::cout << ans2 << std::endl;
+    std::cout << "***********" << std::endl;
+
+
+    ans2 = wrap_dsyev(mat24);
+    std::cout << " *wrapper's results(dsyev, mat24)*" << std::endl;
+    std::cout << ans2.eigenValRe << std::endl;
+    std::cout << ans2.eigenValIm << std::endl;
+    std::cout << ans2.eigenVecl << std::endl;
+    std::cout << ans2.eigenVecr << std::endl;
+    std::cout << ans2 << std::endl;
+    std::cout << "***********" << std::endl;
+    std::cout << "*conform *" << std::endl;
+    std::cout << ans2.eigenVecl*mat24*ans2.eigenVecr.T() << std::endl;
+    std::cout << ans2.QT()*mat24*ans2.Q() << std::endl;
+    std::cout << "***********" << std::endl;
     
 	// to collect the results obtained by a direct call
     class matNd<4> tmp(vr2.T()); 
