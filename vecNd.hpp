@@ -653,10 +653,21 @@ namespace VecMat {
       }
       return true;
     }
+
+    template<int VDIM>
+    inline matNd<VDIM> calc_inverse(const matNd<VDIM> &obj) {
+        int ipiv[VDIM]={};
+        matNd<VDIM> copy = obj;
+        LAPACKE_dgetrf(LAPACK_ROW_MAJOR, /*m=*/ VDIM, /*n=*/ VDIM, 
+           copy.p, /*lda=*/ VDIM,  /*ipiv=*/ipiv);
+        LAPACKE_dgetri(LAPACK_ROW_MAJOR, /*n=*/ VDIM, 
+           copy.p, /*lda=*/ VDIM,  /*ipiv=*/ipiv);
+        return copy;
+    }
     #endif
 
     template<int VDIM>
-    inline const bool is_symetric(const matNd<VDIM> &a){
+    inline bool is_symetric(const matNd<VDIM> &a){
         for (int i=0 ; i <VDIM ; ++i){
         for (int j=0 ; j <VDIM ; ++j){
             if(a[i][j] != a[j][i]){

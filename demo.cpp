@@ -261,6 +261,8 @@ int main(){
     std::cout << "***********" << std::endl;
     std::cout << " *is_symetrici(mat24):  " << is_symetric(mat24) << std::endl;
     std::cout << " *is_positive_difinite_dsy(mat24):  " << is_positive_difinite_dsy(mat24) << std::endl;
+    std::cout << " *calc_inverse(mat24):  "  << calc_inverse(mat24) << std::endl;
+    std::cout << " *mat24*calc_inverse(mat24):  "  << mat24*calc_inverse(mat24) << std::endl;
     std::cout << "***********" << std::endl;
 
     ans2 = wrap_dgeev(mat24);
