@@ -30,6 +30,12 @@
 //#define BOUNDCHECK (false)
 //#endif
 
+#ifdef NO_vecNd_BLAS
+#undef vecNd_BLAS
+#else
+#define vecNd_BLAS
+#endif
+
 #ifdef vecNd_BLAS
 #include <lapacke.h>
 #include <cblas.h>

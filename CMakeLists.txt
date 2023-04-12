@@ -41,9 +41,11 @@ add_executable(speed speed_test.cpp)
 #target_link_libraries(cxx_test Boost::program_options) 
 
 ##for blas
-#set(BLASSUPPORT ${BLASSUPORT})
-set(BLASSUPPORT true)
-if(BLASSUPPORT)
+set(NO_BLASSUPPORT ${NO_BLASSUPORT})
+#set(BLASSUPPORT true)
+if(NO_BLASSUPPORT)
+add_definitions(-DNO_vecNd_BLAS)
+else(NO_BLASSUPPORT)
 message("BLAS will be used")
 add_definitions(-DvecNd_BLAS)
 ##set(BLA_VENDOR "Intel10_64ilp_seq" )
@@ -61,7 +63,7 @@ target_link_libraries(speed blas)
 #target_link_libraries(demo mkl_intel_ilp64 mkl_intel_thread mkl_core iomp5 pthread m dl ) 
 #target_link_libraries(speed mkl_intel_ilp64 mkl_intel_thread mkl_core iomp5 pthread m dl ) 
 
-endif(BLASSUPPORT)
+endif(NO_BLASSUPPORT)
 
 
 # TODO Make test in test dir.

@@ -381,6 +381,7 @@ int main(){
     std::cout << "matE.det()      " <<matE.det()   << std::endl;
 
     std::cout << "**************************"    << std::endl;
+#ifdef vecNd_BLAS
     auto ans3=wrap_dgeev(matE) ;
     std::cout << "Eigen vectors \n " << ans3   << std::endl;
    
@@ -395,4 +396,5 @@ int main(){
       std::cout << " " << (ans3.eigenVecrv[i]*ans3.eigenValRe[i])   << std::endl;
       std::cout << " " << (matE*ans3.eigenVecrv[i])   << std::endl;
     }
+#endif
 }
