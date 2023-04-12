@@ -41,7 +41,8 @@ add_executable(speed speed_test.cpp)
 #target_link_libraries(cxx_test Boost::program_options) 
 
 ##for blas
-set(BLASSUPPORT ${BLASSUPORT})
+#set(BLASSUPPORT ${BLASSUPORT})
+set(BLASSUPPORT true)
 if(BLASSUPPORT)
 message("BLAS will be used")
 add_definitions(-DvecNd_BLAS)
