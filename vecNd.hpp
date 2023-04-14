@@ -43,6 +43,7 @@
 
 /*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*/
 namespace VecMat {
+    constexpr double EPS = 1e-10;
     template <int VDIM> 
     class vecNd {
         public: 
@@ -577,6 +578,23 @@ namespace VecMat {
         }
         return *this;
     } 
+
+    template<int VDIM>
+    inline bool  operator== (const matNd<VDIM> &a, const matNd<VDIM> &b) {
+        for(int i =0 ; i < VDIM; ++i){                    
+            for(int j =0 ; j < VDIM; ++j){                    
+                if(std::abs(a[i][j] - b[i][j])> 0.5* EPS*(std::abs(a[i][j])+std::abs(b[i][j]))){
+                  return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    template<int VDIM>
+    inline bool  operator!= (const matNd<VDIM> &a, const matNd<VDIM> &b) {
+      return !(a==b);
+    }
 
     template<int VDIM>
     inline const matNd<VDIM>  matNd<VDIM>::T() const{

@@ -46,6 +46,9 @@ int main(){
     std::cout <<std::fixed;
     std::cout << "vecNd<VDIM>"              <<std::endl;
     std::cout << "VDIM =3"              <<std::endl;
+    std::cout << "I4 == I4:" << (I4==I4)             <<std::endl;
+    std::cout << "I4 == I4+I4:" << (I4 == (I4+I4))   <<std::endl;
+    std::cout << "vv12:" << vv12             <<std::endl;
     std::cout << "vv11:" << vv11             <<std::endl;
     std::cout << "vv12:" << vv12             <<std::endl;
     std::cout << "vv13:" << vv13             <<std::endl;
