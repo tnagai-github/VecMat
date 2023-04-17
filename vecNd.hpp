@@ -9,20 +9,20 @@
 // Athgough speeds have not been compared yet, blas should be advantageous when the dimensions of problem are large. 
 
 //include guard
-#ifndef vecNd_FILE_
-#define vecNd_FILE_
+#ifndef vecNd_FILE_H
+#define vecNd_FILE_H
 
 #include<iostream>
 #include <initializer_list>
 #include "cxx-prettyprint/prettyprint.hpp"
 
-#ifdef DEBUG
+#ifdef vecnd_DEBUG
 #define bDEBUG (true)
 #else
 #define bDEBUG (false)
 #endif
 
-#define BOUNDCHECK (false)
+#define vecNd_BOUNDCHECK (false)
 //#define BOUNDCHECK (true)
 //#ifdef BOUNDCHECK
 //#define BOUNDCHECK (true)
@@ -33,7 +33,9 @@
 #ifdef NO_vecNd_BLAS
 #undef vecNd_BLAS
 #else
+#ifndef vecNd_BLAS
 #define vecNd_BLAS
+#endif
 #endif
 
 #ifdef vecNd_BLAS
@@ -487,7 +489,7 @@ namespace VecMat {
 
     template<int VDIM>
     inline double* matNd<VDIM>::operator [] (const int i ){
-        if(BOUNDCHECK){
+        if(vecNd_BOUNDCHECK){
             if(i<0 or VDIM<=i){
                 std::cerr << "Improper access" << std::endl;
                 exit(EXIT_FAILURE) ;
@@ -497,7 +499,7 @@ namespace VecMat {
     }
     template<int VDIM>
     inline const double* matNd<VDIM>::operator [] (const int i ) const {
-        if(BOUNDCHECK){
+        if(vecNd_BOUNDCHECK){
             if(i<0 or VDIM<=i){
                 std::cerr << "Improper access" << std::endl;
                 exit(EXIT_FAILURE) ;
