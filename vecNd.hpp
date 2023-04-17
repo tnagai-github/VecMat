@@ -668,7 +668,7 @@ namespace VecMat {
     }
 
     template<int VDIM>
-    bool is_positive_difinite_dsy (matNd<VDIM> mat){
+    bool is_positive_definite_dsy (matNd<VDIM> mat){
       auto ans = wrap_dsyev(mat);
       for(auto const each: ans.eigenValRe){
         if(each<=0){
