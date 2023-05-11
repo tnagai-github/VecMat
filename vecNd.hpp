@@ -45,7 +45,15 @@
 
 /*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*/
 namespace VecMat {
+
     constexpr double EPS = 1e-10;
+    inline bool is_equal_within_eps(const double a, const double b, const double eps=EPS){
+        if(std::abs(a - b)> eps*(std::max(1.0, 0.5*(std::abs(a)+std::abs(b))))){
+            return false;
+        }
+        return true;
+    }
+
     template <int VDIM> 
     class vecNd {
         public: 
@@ -585,8 +593,8 @@ namespace VecMat {
     inline bool  operator== (const matNd<VDIM> &a, const matNd<VDIM> &b) {
         for(int i =0 ; i < VDIM; ++i){                    
             for(int j =0 ; j < VDIM; ++j){                    
-                if(std::abs(a[i][j] - b[i][j])> 0.5* EPS*(std::abs(a[i][j])+std::abs(b[i][j]))){
-                  return false;
+                if(!is_equal_within_eps(a[i][j], b[i][j])){
+                    return false;
                 }
             }
         }
@@ -696,7 +704,7 @@ namespace VecMat {
     inline bool is_symetric(const matNd<VDIM> &a){
         for (int i=0 ; i <VDIM ; ++i){
         for (int j=0 ; j <VDIM ; ++j){
-            if(a[i][j] != a[j][i]){
+            if(!is_equal_within_eps(a[i][j], a[j][i])){
               return false;
             }
         }
