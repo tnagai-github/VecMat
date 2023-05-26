@@ -1,7 +1,7 @@
 #include<iostream>
 #include <iomanip>
 #include<vector>
-#include "prettyprint.hpp"
+#include "cxx-prettyprint/prettyprint.hpp"
 #include "vecNd.hpp"
 #include "vec.hpp"
 

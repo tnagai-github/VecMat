@@ -113,6 +113,16 @@ namespace VecMat {
     template <int VDIM > 
     std::ostream& operator << (std::ostream &os, const vecNd<VDIM>& vv);
 
+    template<int VDIM>
+    inline bool  operator== (const vecNd<VDIM> &a, const vecNd<VDIM> &b) {
+        for(int i =0 ; i < VDIM; ++i){                    
+            if(!is_equal_within_eps(a[i], b[i])){
+                return false;
+            }
+        }
+        return true;
+    }
+
     template <int VDIM > 
     class matNd {
         public:

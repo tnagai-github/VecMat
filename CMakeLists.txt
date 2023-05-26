@@ -24,7 +24,7 @@ endif()
 
 set(CMAKE_CXX_FLAGS_DEBUG -DDEBUG)
 
-include_directories(~/src/cxx-prettyprint)
+include_directories(${PROJECT_SOURCE_DIR})
 include_directories(${PRETTYPRINT})
 
 # if  boost is necessary
@@ -67,8 +67,8 @@ endif(NO_BLASSUPPORT)
 
 
 # TODO Make test in test dir.
-#enable_testing()
+enable_testing()
 # サブディレクトリを指定．指定したディレクトリ内のCMakeLists.txt が実行される
-#add_subdirectory(test)
+add_subdirectory(test)
 
 
