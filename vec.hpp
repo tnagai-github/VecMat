@@ -9,8 +9,8 @@
 // Athgough speeds have not been compared yet, blas should be advantageous when the dimensions of problem are large. 
 
 //include guard
-#ifndef vec_FILE_
-#define vec_FILE_
+#ifndef vec_FILE_H
+#define vec_FILE_H
 
 #include<iostream>
 #include <initializer_list>
