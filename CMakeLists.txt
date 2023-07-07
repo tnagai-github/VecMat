@@ -42,26 +42,29 @@ add_executable(speed speed_test.cpp)
 
 ##for blas
 set(NO_BLASSUPPORT ${NO_BLASSUPORT})
-#set(BLASSUPPORT true)
 if(NO_BLASSUPPORT)
 add_definitions(-DNO_vecNd_BLAS)
 else(NO_BLASSUPPORT)
 message("BLAS will be used")
 add_definitions(-DvecNd_BLAS)
-##set(BLA_VENDOR "Intel10_64ilp_seq" )
-#set ( ENV{BLA_VENDOR} "Intel10_64ilp_seq" )
-#find_package(LAPACK) 
-#find_package(BLAS ) 
+
+if(MKL)
+message("MKL to be used")
+set(BLA_VENDOR "Intel10_64lp" )
+find_package(BLAS ) 
+find_package(LAPACK) 
+
+target_link_libraries(demo BLAS::BLAS) 
+target_link_libraries(speed BLAS::BLAS) 
+
+else(MKL)
+find_package(BLAS ) 
+target_link_libraries(demo BLAS::BLAS) 
 target_link_libraries(demo lapacke) 
-target_link_libraries(demo blas) 
-
+target_link_libraries(speed BLAS::BLAS) 
 target_link_libraries(speed lapacke) 
-target_link_libraries(speed blas) 
+endif(MKL)
 
-#target_link_libraries(demo BLAS::BLAS ${LAPACK_LIBRARIES})
-#target_link_libraries(demo mkl_intel_ilp64 mkl_sequential mkl_core pthread m dl ) 
-#target_link_libraries(demo mkl_intel_ilp64 mkl_intel_thread mkl_core iomp5 pthread m dl ) 
-#target_link_libraries(speed mkl_intel_ilp64 mkl_intel_thread mkl_core iomp5 pthread m dl ) 
 
 endif(NO_BLASSUPPORT)
 
